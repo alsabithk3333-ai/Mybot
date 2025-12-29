@@ -1,17 +1,48 @@
-# 🎮 Advanced Minecraft Server Status Bot
+# Minecraft AFK Bot with Uptime Server
 
-<div align="center">
-  <img src="https://github.com/BLKOFFICIAL.png" alt="Team BLK Logo" width="200"/>
-  <br>
-  <p>
-    <a href="https://www.youtube.com/@team_blk_official"><img src="https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="YouTube"></a>
-    <a href="https://github.com/BLKOFFICIAL"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"></a>
-    <a href="https://discord.com"><img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
-  </p>
-</div>
+## index.js
+```js
+const mineflayer = require('mineflayer')
+const express = require('express')
 
-## 📝 Description
+function startBot () {
+  const bot = mineflayer.createBot({
+    host: 'in7.terohost.in',
+    port: 26767,
+    username: 'AFK_Bot',
+    version: '1.21'
+  })
 
+  bot.on('spawn', () => {
+    setInterval(() => {
+      bot.setControlState('forward', true)
+      setTimeout(() => {
+        bot.setControlState('forward', false)
+      }, 200)
+    }, 45000)
+  })
+
+  bot.on('kicked', (reason) => {
+    console.log('KICKED:', reason)
+  })
+
+  bot.on('end', () => {
+    setTimeout(startBot, 5000)
+  })
+
+  bot.on('error', console.log)
+}
+
+startBot()
+
+const app = express()
+const PORT = process.env.PORT || 3000
+
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/uptimer.html')
+})
+
+app.listen(PORT)
 A powerful and feature-rich Discord bot that provides real-time Minecraft server status monitoring with beautiful embed messages, player count charts, and customizable displays.
 
 ### 🌟 Features
@@ -173,4 +204,5 @@ If you find this bot helpful, please consider:
     <img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js">
     <img src="https://img.shields.io/badge/Discord.js-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord.js">
   </p>
+
 </div> 
