@@ -6,8 +6,8 @@ const express = require('express')
    =============================== */
 function startBot () {
   const bot = mineflayer.createBot({
-    host: 'in7.terohost.in',
-    port: 26767,
+    host: 'Nii111.aternos.me',
+    port: 34596,
     username: 'AFK_Bot',
     version: '1.21'
   })
