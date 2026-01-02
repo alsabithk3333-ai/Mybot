@@ -1,27 +1,23 @@
 const mineflayer = require('mineflayer')
 const express = require('express')
 
-/* ===============================
-   MINECRAFT AFK BOT (NO CHAT)
-   =============================== */
 function startBot () {
   const bot = mineflayer.createBot({
     host: 'Nii111.aternos.me',
     port: 34596,
     username: 'AFK_Bot',
-    version: '1.21'
+    version: '1.21.3'
   })
 
   bot.on('spawn', () => {
-    console.log('AFK bot spawned at farm')
+    console.log('AFK bot spawned on 1.21.3 (no movement, no sneak)')
 
-    // Very small movement to avoid AFK kick
+    // Anti-AFK: camera rotation ONLY (safe for scaffolding)
     setInterval(() => {
-      bot.setControlState('forward', true)
-      setTimeout(() => {
-        bot.setControlState('forward', false)
-      }, 200)
-    }, 45000)
+      const yaw = Math.random() * Math.PI * 2
+      const pitch = (Math.random() * 0.2) - 0.1
+      bot.look(yaw, pitch, true)
+    }, 20000)
   })
 
   bot.on('kicked', (reason) => {
@@ -29,7 +25,7 @@ function startBot () {
   })
 
   bot.on('end', () => {
-    console.log('Bot disconnected, reconnecting...')
+    console.log('Disconnected, reconnecting...')
     setTimeout(startBot, 5000)
   })
 
@@ -39,19 +35,13 @@ function startBot () {
 startBot()
 
 /* ===============================
-   UPTIME HTTP SERVER
+   UPTIME SERVER
    =============================== */
 const app = express()
 const PORT = process.env.PORT || 3000
 
-// Serve uptime HTML
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/uptimer.html')
-})
-
-// Health endpoint (optional)
-app.get('/health', (req, res) => {
-  res.json({ status: 'online' })
+  res.send('AFK bot is running')
 })
 
 app.listen(PORT, () => {
