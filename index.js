@@ -1,48 +1,59 @@
+// ==================== WEB SERVER (RENDER REQUIRED) ====================
+const express = require('express')
+const app = express()
+
+const PORT = process.env.PORT || 3000
+
+app.get('/', (req, res) => {
+  res.send('AFK Bot is running')
+})
+
+app.listen(PORT, () => {
+  console.log(`Web server listening on port ${PORT}`)
+})
+
+// ==================== MINEFLAYER AFK BOT ====================
 const mineflayer = require('mineflayer')
 
-function startBot () {
-  console.log('Starting AFK bot...')
+console.log('Starting AFK bot...')
 
+function startBot () {
   const bot = mineflayer.createBot({
     host: 'Nii111.aternos.me',
-    port: 34596, // change if needed
-    username: 'keralakk',
+    port: 34596,
+    username: 'AFK_Bot',
     version: '1.21.3'
   })
 
-  let movementInterval = null
-  let jumpInterval = null
+  let lookInterval = null
+  let armInterval = null
 
-  function startMovementLoop () {
-    console.log('Starting movement loop')
-
-    // RUN forward continuously
-    bot.setControlState('forward', true)
-
-    // RANDOM JUMP LOOP
-    jumpInterval = setInterval(() => {
-      bot.setControlState('jump', true)
-      setTimeout(() => bot.setControlState('jump', false), 300)
-    }, Math.floor(Math.random() * 2000) + 1500) // every 1.5–3.5 sec
-  }
-
-  function stopMovementLoop () {
-    bot.setControlState('forward', false)
-    bot.setControlState('jump', false)
-
-    if (jumpInterval) clearInterval(jumpInterval)
-    jumpInterval = null
-  }
+  bot.on('login', () => {
+    console.log('Bot logged in to Aternos server')
+  })
 
   bot.on('spawn', () => {
-    console.log('Bot spawned (or respawned)')
-    stopMovementLoop()     // safety
-    startMovementLoop()    // ALWAYS restart on spawn
+    console.log('Bot spawned / respawned (AFK mode)')
+
+    // -------- SAFE CAMERA MOVEMENT --------
+    if (lookInterval) clearInterval(lookInterval)
+    lookInterval = setInterval(() => {
+      const yaw = bot.entity.yaw + (Math.random() * 0.2 - 0.1)
+      const pitch = Math.random() * 0.08 - 0.04
+      bot.look(yaw, pitch, true)
+    }, 30000) // every 30 seconds (very safe)
+
+    // -------- RARE HUMAN ACTION --------
+    if (armInterval) clearInterval(armInterval)
+    armInterval = setInterval(() => {
+      try {
+        bot.swingArm('right')
+      } catch {}
+    }, 240000) // once every 4 minutes
   })
 
   bot.on('death', () => {
     console.log('Bot died')
-    stopMovementLoop()
   })
 
   bot.on('kicked', (reason) => {
@@ -50,9 +61,10 @@ function startBot () {
   })
 
   bot.on('end', () => {
-    console.log('Disconnected. Reconnecting...')
-    stopMovementLoop()
-    setTimeout(startBot, 5000)
+    console.log('Disconnected. Reconnecting in 15 seconds...')
+    clearInterval(lookInterval)
+    clearInterval(armInterval)
+    setTimeout(startBot, 15000)
   })
 
   bot.on('error', (err) => {
