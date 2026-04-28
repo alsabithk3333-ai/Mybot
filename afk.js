@@ -19,9 +19,9 @@ console.log('Starting AFK bot (scaffolding-safe)...')
 
 function startBot () {
   const bot = mineflayer.createBot({
-    host: 'Nii111.aternos.me',
-    port: 34596,
-    username: 'sleeper',
+    host: 'dangerboysss.mc-join.net',
+    port: 26020,
+    username: 'AFKbot',
     version: '1.21.3'
   })
 
