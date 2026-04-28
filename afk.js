@@ -22,7 +22,7 @@ function startBot () {
     host: 'dangerboysss.mc-join.net',
     port: 26020,
     username: 'AFKbot',
-    version: '1.21.3'
+    version: '1.21.1'
   })
 
   let lookInterval = null
